@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Activity, Shield, Chart } from "lucide-react";
+import { Activity, Shield, BarChart } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ const Index = () => {
 
           <div className="flex gap-4 items-center bg-white/10 p-4 rounded-lg">
             <div className="bg-white/20 p-3 rounded-full">
-              <Chart size={28} />
+              <BarChart size={28} />
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-lg">Progress Tracking</h3>
