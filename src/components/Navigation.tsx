@@ -1,10 +1,12 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Home, Activity, Video, User } from "lucide-react";
+import { Home, Activity, User, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useRole } from "@/contexts/RoleContext";
 
 const Navigation = () => {
   const location = useLocation();
+  const { isTrainer } = useRole();
   
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -23,6 +25,19 @@ const Navigation = () => {
           <Home size={24} />
           <span className="text-xs mt-1">Home</span>
         </Link>
+        
+        {isTrainer && (
+          <Link
+            to="/athletes"
+            className={cn(
+              "flex flex-col items-center justify-center w-full h-full",
+              isActive("/athletes") ? "text-sportBlue" : "text-gray-500"
+            )}
+          >
+            <Users size={24} />
+            <span className="text-xs mt-1">Athletes</span>
+          </Link>
+        )}
         
         <Link
           to="/tests"

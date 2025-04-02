@@ -2,13 +2,15 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { PlusCircle, TrendingDown, Calendar } from "lucide-react";
+import { PlusCircle, TrendingDown, Calendar, Users } from "lucide-react";
 import RiskScore from "@/components/RiskScore";
 import HistoryCard from "@/components/HistoryCard";
 import { assessmentHistory, getLatestAssessment } from "@/data/historyData";
+import { useRole } from "@/contexts/RoleContext";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { isTrainer } = useRole();
   const latestAssessment = getLatestAssessment();
 
   return (
@@ -16,14 +18,44 @@ const Dashboard = () => {
       {/* Header */}
       <div className="bg-sportBlue text-white p-6">
         <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="text-white/80">Track your movement assessment progress</p>
+        <p className="text-white/80">
+          {isTrainer 
+            ? "Manage your athletes and track their assessment progress" 
+            : "Track your movement assessment progress"}
+        </p>
       </div>
+
+      {/* Trainer-specific section */}
+      {isTrainer && (
+        <div className="p-6">
+          <Card className="mb-6">
+            <CardContent className="p-4">
+              <div className="flex justify-between items-center">
+                <div>
+                  <h2 className="text-lg font-semibold">Your Athletes</h2>
+                  <p className="text-sm text-gray-500">Manage and assess your athletes</p>
+                </div>
+                <Button 
+                  onClick={() => navigate("/athletes")} 
+                  variant="outline"
+                  className="text-sportBlue"
+                >
+                  <Users size={18} className="mr-2" />
+                  Manage Athletes
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Risk Overview */}
       <div className="p-6">
         <Card>
           <CardContent className="p-4">
-            <h2 className="text-lg font-semibold mb-4">Current Risk Overview</h2>
+            <h2 className="text-lg font-semibold mb-4">
+              {isTrainer ? "Latest Assessment Overview" : "Current Risk Overview"}
+            </h2>
             <div className="flex justify-between items-center">
               <RiskScore score={latestAssessment.riskScore} size="lg" />
 
@@ -44,7 +76,7 @@ const Dashboard = () => {
           className="w-full bg-sportBlue hover:bg-sportBlue/90 text-white"
         >
           <PlusCircle size={18} className="mr-2" />
-          New Assessment
+          {isTrainer ? "New Athlete Assessment" : "New Assessment"}
         </Button>
       </div>
 
@@ -71,7 +103,9 @@ const Dashboard = () => {
 
       {/* Recent Assessments */}
       <div className="px-6">
-        <h2 className="text-lg font-semibold mb-3">Recent Assessments</h2>
+        <h2 className="text-lg font-semibold mb-3">
+          {isTrainer ? "Recent Athlete Assessments" : "Recent Assessments"}
+        </h2>
         <div className="space-y-3">
           {assessmentHistory.slice(0, 3).map(assessment => (
             <HistoryCard
