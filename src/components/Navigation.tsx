@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { Home, Activity, User, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -6,17 +5,24 @@ import { useRole } from "@/contexts/RoleContext";
 
 const Navigation = () => {
   const location = useLocation();
-  const { isTrainer } = useRole();
+  const { isTrainer, role } = useRole();
   
   const isActive = (path: string) => {
+    // For dashboard, check if we're on any dashboard route
+    if (path.includes('/dashboard') && location.pathname.includes('/dashboard')) {
+      return true;
+    }
     return location.pathname === path;
   };
+
+  // Determine the correct dashboard URL based on role
+  const dashboardUrl = role ? `/dashboard/${role}` : '/';
 
   return (
     <div className="fixed bottom-0 left-0 right-0 border-t border-gray-200 bg-white">
       <nav className="flex justify-around items-center h-16">
         <Link
-          to="/dashboard"
+          to={dashboardUrl}
           className={cn(
             "flex flex-col items-center justify-center w-full h-full",
             isActive("/dashboard") ? "text-sportBlue" : "text-gray-500"

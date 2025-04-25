@@ -1,4 +1,3 @@
-
 export interface Test {
   id: string;
   title: string;
@@ -19,7 +18,7 @@ export const testsData: Test[] = [
     id: "drop-jump",
     title: "Drop Jump Test",
     description: "Evaluates landing mechanics and neuromuscular control",
-    imageUrl: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=500",
+    imageUrl: "/drop-test.jpg",
     duration: "2-3 min",
     instructions: [
       "Stand on a box approximately 30cm high",
@@ -39,7 +38,7 @@ export const testsData: Test[] = [
     id: "single-leg-squat",
     title: "Single-Leg Squat",
     description: "Assesses stability and alignment during single-leg loading",
-    imageUrl: "https://images.unsplash.com/photo-1434682772747-f16d3ea162c3?q=80&w=500",
+    imageUrl: "/single-leg.jpg",
     duration: "3-4 min",
     instructions: [
       "Stand on one leg with your hands on your hips",
@@ -59,7 +58,7 @@ export const testsData: Test[] = [
     id: "single-leg-hop",
     title: "Single-Leg Hop",
     description: "Evaluates power and landing control on a single leg",
-    imageUrl: "https://images.unsplash.com/photo-1517438476312-10d79c077509?q=80&w=500",
+    imageUrl: "/single-leg-hop.webp",
     duration: "3-4 min",
     instructions: [
       "Stand on one leg with your hands on your hips",

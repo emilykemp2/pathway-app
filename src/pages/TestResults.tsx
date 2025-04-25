@@ -1,6 +1,5 @@
-
 import { useParams, useNavigate, useSearchParams, Link } from "react-router-dom";
-import { ChevronLeft, Download, Share2, PlayCircle, Pause } from "lucide-react";
+import { ChevronLeft, Download, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -23,8 +22,14 @@ const TestResults = () => {
     assessmentHistory.find(a => a.testId === testId)
   );
   
-  const [isPlaying, setIsPlaying] = useState(false);
   const [exercises, setExercises] = useState(assessment ? getRecommendedExercises(assessment.riskScore) : []);
+
+  // Hard-coded values for second set of joint markers (ideal form)
+  const idealJointData = {
+    hip: { x: 45, y: 47 },
+    knee: { x: 45, y: 67 },
+    ankle: { x: 43, y: 85 }
+  };
 
   useEffect(() => {
     if (testId) {
@@ -72,67 +77,84 @@ const TestResults = () => {
 
       {/* Risk Score */}
       <div className="p-6">
-        <Card className="mb-6">
-          <CardContent className="p-4 flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-semibold mb-1">ACL Injury Risk</h2>
-              <p className="text-sm text-gray-600">Based on your movement patterns</p>
-            </div>
-            <RiskScore score={assessment.riskScore} />
-          </CardContent>
-        </Card>
-
-        {/* Video Analysis */}
+        {/* Image Analysis with Joint Markers */}
         <div className="mb-6">
           <h2 className="text-lg font-semibold mb-3">Movement Analysis</h2>
           <Card className="overflow-hidden">
             <div className="aspect-video bg-gray-900 relative">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="text-white bg-black/30 hover:bg-black/50 rounded-full h-12 w-12"
-                  onClick={() => setIsPlaying(!isPlaying)}
-                >
-                  {isPlaying ? (
-                    <Pause size={24} />
-                  ) : (
-                    <PlayCircle size={24} />
-                  )}
-                </Button>
+              {/* Using the image instead of video */}
+              <img 
+                src="/acllandincorrectly.jpg" 
+                alt="ACL Landing Analysis" 
+                className="absolute inset-0 w-full h-full object-contain"
+              />
+              
+              {/* First Set of Joint Markers - Current User's Form */}
+              <div className="joint-marker absolute w-4 h-4 rounded-full bg-[#39FF14] transform -translate-x-1/2 -translate-y-1/2" 
+                style={{ left: `${assessment.jointData.hip.x}%`, top: `${assessment.jointData.hip.y}%` }}></div>
+              <div className="joint-marker absolute w-4 h-4 rounded-full bg-[#39FF14] transform -translate-x-1/2 -translate-y-1/2" 
+                style={{ left: `${assessment.jointData.knee.x}%`, top: `${assessment.jointData.knee.y}%` }}></div>
+              <div className="joint-marker absolute w-4 h-4 rounded-full bg-[#39FF14] transform -translate-x-1/2 -translate-y-1/2" 
+                style={{ left: `${assessment.jointData.ankle.x}%`, top: `${assessment.jointData.ankle.y}%` }}></div>
+              
+              {/* Second Set of Joint Markers - Ideal Form (Hard-coded) */}
+              <div className="joint-marker absolute w-4 h-4 rounded-full bg-[#39FF14] transform -translate-x-1/2 -translate-y-1/2" 
+                style={{ left: `${idealJointData.hip.x}%`, top: `${idealJointData.hip.y}%` }}></div>
+              <div className="joint-marker absolute w-4 h-4 rounded-full bg-[#39FF14] transform -translate-x-1/2 -translate-y-1/2" 
+                style={{ left: `${idealJointData.knee.x}%`, top: `${idealJointData.knee.y}%` }}></div>
+              <div className="joint-marker absolute w-4 h-4 rounded-full bg-[#39FF14] transform -translate-x-1/2 -translate-y-1/2" 
+                style={{ left: `${idealJointData.ankle.x}%`, top: `${idealJointData.ankle.y}%` }}></div>
+              
+              {/* Joint Lines - Both sets */}
+              <svg className="absolute inset-0 w-full h-full">
+                {/* First Set - Current User's Form */}
+                {/* Hip to Knee line */}
+                <line 
+                  x1={`${assessment.jointData.hip.x}%`} 
+                  y1={`${assessment.jointData.hip.y}%`}
+                  x2={`${assessment.jointData.knee.x}%`} 
+                  y2={`${assessment.jointData.knee.y}%`}
+                  stroke="#39FF14"
+                  strokeWidth="3"
+                />
+                {/* Knee to Ankle line */}
+                <line 
+                  x1={`${assessment.jointData.knee.x}%`} 
+                  y1={`${assessment.jointData.knee.y}%`}
+                  x2={`${assessment.jointData.ankle.x}%`} 
+                  y2={`${assessment.jointData.ankle.y}%`}
+                  stroke="#39FF14"
+                  strokeWidth="3"
+                />
+
+                {/* Second Set - Ideal Form (Hard-coded) */}
+                {/* Hip to Knee line */}
+                <line 
+                  x1={`${idealJointData.hip.x}%`} 
+                  y1={`${idealJointData.hip.y}%`}
+                  x2={`${idealJointData.knee.x}%`} 
+                  y2={`${idealJointData.knee.y}%`}
+                  stroke="#39FF14"
+                  strokeWidth="3"
+                />
+                {/* Knee to Ankle line */}
+                <line 
+                  x1={`${idealJointData.knee.x}%`} 
+                  y1={`${idealJointData.knee.y}%`}
+                  x2={`${idealJointData.ankle.x}%`} 
+                  y2={`${idealJointData.ankle.y}%`}
+                  stroke="#39FF14"
+                  strokeWidth="3"
+                />
+              </svg>
+              
+              {/* Legend */}
+              <div className="absolute bottom-4 left-4 bg-black/50 p-2 rounded text-white text-xs">
+                <div className="flex items-center mb-1">
+                  <div className="w-2 h-2 rounded-full bg-[#39FF14] mr-2"></div>
+                  <span>Joint Tracking</span>
+                </div>
               </div>
-              
-              {/* Joint Markers (Positioned absolutely in a real implementation) */}
-              <div className="joint-marker" style={{ left: `${assessment.jointData.hip.x}%`, top: `${assessment.jointData.hip.y}%` }}></div>
-              <div className="joint-marker" style={{ left: `${assessment.jointData.knee.x}%`, top: `${assessment.jointData.knee.y}%` }}></div>
-              <div className="joint-marker" style={{ left: `${assessment.jointData.ankle.x}%`, top: `${assessment.jointData.ankle.y}%` }}></div>
-              
-              {/* Joint Lines */}
-              <div className="joint-line" style={{ 
-                left: `${assessment.jointData.hip.x}%`, 
-                top: `${assessment.jointData.hip.y}%`,
-                width: `${Math.sqrt(
-                  Math.pow(assessment.jointData.knee.x - assessment.jointData.hip.x, 2) + 
-                  Math.pow(assessment.jointData.knee.y - assessment.jointData.hip.y, 2)
-                )}%`,
-                transform: `rotate(${Math.atan2(
-                  assessment.jointData.knee.y - assessment.jointData.hip.y,
-                  assessment.jointData.knee.x - assessment.jointData.hip.x
-                ) * (180 / Math.PI)}deg)`
-              }}></div>
-              
-              <div className="joint-line" style={{ 
-                left: `${assessment.jointData.knee.x}%`, 
-                top: `${assessment.jointData.knee.y}%`,
-                width: `${Math.sqrt(
-                  Math.pow(assessment.jointData.ankle.x - assessment.jointData.knee.x, 2) + 
-                  Math.pow(assessment.jointData.ankle.y - assessment.jointData.knee.y, 2)
-                )}%`,
-                transform: `rotate(${Math.atan2(
-                  assessment.jointData.ankle.y - assessment.jointData.knee.y,
-                  assessment.jointData.ankle.x - assessment.jointData.knee.x
-                ) * (180 / Math.PI)}deg)`
-              }}></div>
             </div>
             <div className="p-4 flex justify-between">
               <Button variant="outline" size="sm">

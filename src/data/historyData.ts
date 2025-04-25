@@ -1,4 +1,3 @@
-
 export interface Assessment {
   id: string;
   testId: string;
@@ -25,7 +24,7 @@ export const assessmentHistory: Assessment[] = [
     testId: "drop-jump",
     testName: "Drop Jump Test",
     date: "May 12, 2023",
-    riskScore: 72,
+    riskScore: 10,
     videoUrl: "https://example.com/assessment-a1",
     findings: [
       {
@@ -40,18 +39,18 @@ export const assessmentHistory: Assessment[] = [
       }
     ],
     jointData: {
-      hip: { x: 50, y: 40 },
-      knee: { x: 42, y: 60 },
-      ankle: { x: 48, y: 80 },
+      hip: { x: 53, y: 47 },
+      knee: { x: 54, y: 65 },
+      ankle: { x: 57, y: 85 },
       kneeValgusAngle: 15
-    }
+    },
   },
   {
     id: "a2",
     testId: "single-leg-squat",
     testName: "Single-Leg Squat",
     date: "May 18, 2023",
-    riskScore: 45,
+    riskScore: 3,
     videoUrl: "https://example.com/assessment-a2",
     findings: [
       {
@@ -77,7 +76,7 @@ export const assessmentHistory: Assessment[] = [
     testId: "drop-jump",
     testName: "Drop Jump Test",
     date: "June 10, 2023",
-    riskScore: 58,
+    riskScore: 5,
     videoUrl: "https://example.com/assessment-a3",
     findings: [
       {
@@ -103,7 +102,7 @@ export const assessmentHistory: Assessment[] = [
     testId: "single-leg-hop",
     testName: "Single-Leg Hop",
     date: "June 22, 2023",
-    riskScore: 25,
+    riskScore: 5,
     videoUrl: "https://example.com/assessment-a4",
     findings: [
       {
@@ -118,7 +117,7 @@ export const assessmentHistory: Assessment[] = [
       }
     ],
     jointData: {
-      hip: { x: 50, y: 40 },
+      hip: { x: 53, y: 47 },
       knee: { x: 49, y: 60 },
       ankle: { x: 48, y: 80 },
       kneeValgusAngle: 3

@@ -23,7 +23,7 @@ const HistoryCard = ({ id, testId, testName, date, riskScore }: HistoryCardProps
               <p className="text-sm text-gray-500">{date}</p>
             </div>
             <div className="flex items-center gap-3">
-              <RiskScore score={riskScore} showLabel={false} size="sm" />
+              <RiskScore degrees={riskScore} size="sm" />
               <ArrowRight size={18} className="text-sportBlue" />
             </div>
           </div>

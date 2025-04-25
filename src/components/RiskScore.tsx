@@ -1,33 +1,32 @@
-
 import { cn } from "@/lib/utils";
 
 type RiskLevel = "low" | "moderate" | "high";
 
 interface RiskScoreProps {
-  score: number;
+  degrees: number;
   showLabel?: boolean;
   size?: "sm" | "md" | "lg";
 }
 
-const RiskScore = ({ score, showLabel = true, size = "md" }: RiskScoreProps) => {
-  const getRiskLevel = (score: number): RiskLevel => {
-    if (score < 30) return "low";
-    if (score < 70) return "moderate";
+const RiskScore = ({ degrees, showLabel = true, size = "md" }: RiskScoreProps) => {
+  const getRiskLevel = (degrees: number): RiskLevel => {
+    if (degrees < 5) return "low";
+    if (degrees < 10) return "moderate";
     return "high";
   };
 
-  const riskLevel = getRiskLevel(score);
+  const riskLevel = getRiskLevel(degrees);
 
   const riskColorClass = {
     low: "bg-riskGreen",
     moderate: "bg-riskYellow",
-    high: "bg-riskRed animate-pulse-risk",
+    high: "bg-[#f66a6a]",
   }[riskLevel];
 
   const riskLabel = {
-    low: "Low Risk",
-    moderate: "Moderate Risk",
-    high: "High Risk",
+    low: "Good",
+    moderate: "Mid",
+    high: "High",
   }[riskLevel];
 
   const sizeClasses = {
@@ -45,7 +44,7 @@ const RiskScore = ({ score, showLabel = true, size = "md" }: RiskScoreProps) => 
           sizeClasses
         )}
       >
-        {score}%
+        {degrees}°
       </div>
       {showLabel && (
         <p className={cn(

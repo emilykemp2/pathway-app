@@ -1,6 +1,5 @@
-
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,17 +7,48 @@ import {
   PlusCircle, 
   UserCircle, 
   Search, 
-  BarChart
+  BarChart,
+  FilterIcon,
+  AlertCircle
 } from "lucide-react";
 import { useRole } from "@/contexts/RoleContext";
 import { toast } from "sonner";
 import { athletesData, Athlete } from "@/data/athletesData";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+
+interface LocationState {
+  selectedSport?: string;
+}
 
 const AthleteManagement = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isTrainer } = useRole();
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedSport, setSelectedSport] = useState<string>("all");
+  const [showHighRiskOnly, setShowHighRiskOnly] = useState<boolean>(false);
   const [athletes] = useState<Athlete[]>(athletesData);
+  
+  // Define threshold for high risk athletes (e.g., risk score >= 60)
+  const HIGH_RISK_THRESHOLD = 60;
+
+  // Get the selected sport from location state (if passed from Dashboard)
+  useEffect(() => {
+    const state = location.state as LocationState;
+    if (state && state.selectedSport) {
+      setSelectedSport(state.selectedSport);
+    }
+  }, [location.state]);
+
+  // Get unique sports from athletes data
+  const sports = ["All Sports", ...Array.from(new Set(athletes.map(athlete => athlete.sport)))];
 
   // Redirect non-trainers
   if (!isTrainer) {
@@ -26,10 +56,18 @@ const AthleteManagement = () => {
     return null;
   }
 
-  const filteredAthletes = athletes.filter(athlete => 
-    athlete.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    athlete.sport.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter athletes by search term, sport, and risk level
+  const filteredAthletes = athletes.filter(athlete => {
+    const matchesSearch = 
+      athlete.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      athlete.sport.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesSport = selectedSport === "all" || athlete.sport === selectedSport;
+    
+    const matchesRiskFilter = !showHighRiskOnly || athlete.riskScore >= HIGH_RISK_THRESHOLD;
+    
+    return matchesSearch && matchesSport && matchesRiskFilter;
+  });
 
   const handleAddAthlete = () => {
     // In a real app, this would open a form to add a new athlete
@@ -38,7 +76,7 @@ const AthleteManagement = () => {
 
   const handleViewAthlete = (id: string) => {
     // In a real app, this would navigate to the athlete's profile
-    toast.info(`Viewing athlete ${id} in a real app would show their profile`);
+    navigate(`/athlete/${id}`);
   };
 
   const handleAssessAthlete = (id: string) => {
@@ -49,14 +87,14 @@ const AthleteManagement = () => {
   return (
     <div className="flex flex-col pb-20">
       {/* Header */}
-      <div className="bg-sportBlue text-white p-6">
+      <div className="bg-white text-sportBlue p-6">
         <h1 className="text-2xl font-bold">Athletes</h1>
-        <p className="text-white/80">Manage and track your athletes</p>
+        <p className="text-gray-500">Manage and track your athletes</p>
       </div>
 
       {/* Search and Add */}
       <div className="p-6">
-        <div className="flex gap-2 mb-6">
+        <div className="flex flex-col md:flex-row gap-2 mb-6">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
             <Input
@@ -65,6 +103,40 @@ const AthleteManagement = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
+          </div>
+          <div className="w-full md:w-48">
+            <Select
+              value={selectedSport}
+              onValueChange={(value) => setSelectedSport(value)}
+            >
+              <SelectTrigger>
+                <FilterIcon size={16} className="mr-2" />
+                <SelectValue placeholder="Filter by sport" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Sports</SelectItem>
+                {sports.filter(sport => sport !== "All Sports").map((sport) => (
+                  <SelectItem key={sport} value={sport}>
+                    {sport}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="w-full md:w-auto flex items-center gap-2 px-3 py-2 border rounded-md bg-white">
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="highRiskFilter"
+                checked={showHighRiskOnly}
+                onChange={() => setShowHighRiskOnly(!showHighRiskOnly)}
+                className="mr-2"
+              />
+              <label htmlFor="highRiskFilter" className="text-sm text-gray-600 flex items-center">
+                <AlertCircle size={16} className="mr-1 text-red-500" />
+                High Risk Only
+              </label>
+            </div>
           </div>
           <Button onClick={handleAddAthlete} className="bg-sportBlue hover:bg-sportBlue/90">
             <PlusCircle size={18} className="mr-2" />
@@ -96,8 +168,10 @@ const AthleteManagement = () => {
                       <div className="flex items-center gap-2">
                         <div className="flex flex-col items-end mr-2">
                           <div className="flex items-center gap-1">
-                            <BarChart size={14} className="text-sportBlue" />
-                            <span className="font-semibold text-sm">Risk: {athlete.riskScore}</span>
+                            <BarChart size={14} className={athlete.riskScore >= HIGH_RISK_THRESHOLD ? "text-red-500" : "text-sportBlue"} />
+                            <span className={`font-semibold text-sm ${athlete.riskScore >= HIGH_RISK_THRESHOLD ? "text-red-500" : ""}`}>
+                              Risk: {athlete.riskScore}
+                            </span>
                           </div>
                           <p className="text-xs text-gray-500">Last: {athlete.lastAssessment}</p>
                         </div>

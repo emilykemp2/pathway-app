@@ -14,7 +14,7 @@ interface TestCardProps {
 const TestCard = ({ id, title, description, imageUrl, duration }: TestCardProps) => {
   return (
     <Link to={`/tests/${id}/instructions`}>
-      <Card className="overflow-hidden hover:shadow-md transition-shadow">
+      <Card className="overflow-hidden hover:shadow-md transition-shadow max-w-96 min-h-80">
         <div className="h-40 overflow-hidden bg-gray-100 relative">
           <img 
             src={imageUrl} 
